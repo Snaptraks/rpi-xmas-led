@@ -2,8 +2,16 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.collections import PathCollection
 import numpy as np
+from typing import Generator, Iterable, Sequence
 
-from colors import low_res_rainbow
+from colors import low_res_rainbow, colors_fade_rgb, random_rgb
+
+ColorType = tuple[float, ...]
+
+
+def norm_color(color: ColorType) -> ColorType:
+    """Return a value between 0 and 1 for color, as required by matplotlib."""
+    return tuple(c / 255 for c in color)  # type: ignore
 
 
 def plot(coords: np.ndarray):
@@ -17,18 +25,40 @@ def plot(coords: np.ndarray):
     fig.savefig("led.png")
 
 
-def update_plot(i: int, sc: PathCollection) -> tuple[PathCollection]:
-    color = [c / 255 for c in next(low_res_rainbow)]
-    sc.set_facecolor([color for _ in range(100)])
-    print(i)
+def random_color_fade() -> Generator[ColorType, None, None]:
+    start = random_rgb()
+    end = random_rgb()
+
+    while True:
+        for c in colors_fade_rgb(start, end, steps=20):
+            yield norm_color(c)
+        start, end = end, random_rgb()
+
+
+def update_plot(
+    c: tuple[float, float, float], sc: PathCollection
+) -> tuple[PathCollection]:
+    sc.set_facecolor(c)
     return (sc,)
 
 
 def animate(coords: np.ndarray):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(5, 5))
+    ax.set_aspect("equal", "box")
+    ax.set_axis_off()
+    ax.set_facecolor((0, 0, 0))
+    fig.set_facecolor((0, 0, 0))
     sc = ax.scatter(*coords.T)
+
+    color_gen = random_color_fade()
+
     anim = animation.FuncAnimation(
-        fig, update_plot, frames=60, fargs=(sc,), interval=500
+        fig,
+        update_plot,
+        color_gen,  # type: ignore
+        fargs=(sc,),
+        interval=100,
+        cache_frame_data=False,
     )
     plt.show()
 

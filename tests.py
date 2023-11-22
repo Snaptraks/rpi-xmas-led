@@ -1,5 +1,4 @@
 import argparse
-import colorsys
 import math
 import random
 import time
@@ -7,7 +6,7 @@ import time
 import board
 import neopixel
 
-from colors import low_res_rainbow
+from colors import low_res_rainbow, colors_fade_rgb, rainbow_gen, random_rgb
 
 
 N_PIXELS: int = 50
@@ -18,23 +17,6 @@ pixels = neopixel.NeoPixel(
     pixel_order=neopixel.RGB,
     auto_write=False,
 )
-
-
-def rainbow_gen():
-    colors = [255, 0, 0]  # initial color
-    i = 1  # color index to change
-    step = 3
-    while True:
-        if colors[i - 1] == 255 and colors[i] != 255:
-            colors[i] += step
-
-        elif colors[i - 1] != 0 and colors[i] == 255:
-            colors[i - 1] -= step
-
-        if colors[i - 1] == 0 and colors[i] == 255:
-            i = (i + 1) % 3
-
-        yield colors
 
 
 def rainbow_wave():
@@ -134,37 +116,16 @@ def sinus_colors():
         pixels.show()
 
 
-def colors_fade_rgb(
-    color_0: list[int], color_1: list[int], steps: int = 20, sleep_time: float = 0.2
-):
-    # color_0 = [255, 0, 0]
-    # color_1 = [0, 255, 255]
-
-    # steps = 20
-    # sleep_time = 0.2
-
-    slope = [(color_1[i] - color_0[i]) / steps for i in range(3)]
-
-    new_color = color_0[:]
-    for t in range(steps + 1):
-        new_color = [color_0[i] + t * slope[i] for i in range(3)]
-        pixels.fill([int(c) for c in new_color])
-        pixels.show()
-        time.sleep(sleep_time)
-
-
-def random_rgb() -> list[int]:
-    rgb = [int(c * 255) for c in colorsys.hsv_to_rgb(random.random(), 1, 1)]
-    return rgb
-
-
 def random_color_fade():
     start = random_rgb()
     end = random_rgb()
 
     while True:
         print(f"{start} -> {end}")
-        colors_fade_rgb(start, end, steps=20, sleep_time=0.1)
+        for color in colors_fade_rgb(start, end, steps=20):
+            pixels.fill(color)
+            pixels.show()
+            time.sleep(0.1)
         start, end = end, random_rgb()
 
 

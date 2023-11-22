@@ -1,12 +1,13 @@
 import argparse
 import colorsys
-import itertools
 import math
 import random
 import time
 
 import board
 import neopixel
+
+from colors import low_res_rainbow
 
 
 N_PIXELS: int = 50
@@ -16,18 +17,6 @@ pixels = neopixel.NeoPixel(
     brightness=0.3,
     pixel_order=neopixel.RGB,
     auto_write=False,
-)
-
-
-low_res_rainbow = itertools.cycle(
-    [
-        [255, 0, 0],
-        [255, 255, 0],
-        [0, 255, 0],
-        [0, 255, 255],
-        [0, 0, 255],
-        [255, 0, 255],
-    ]
 )
 
 

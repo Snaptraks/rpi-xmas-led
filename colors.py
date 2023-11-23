@@ -40,6 +40,6 @@ def rainbow_gen():
         yield colors
 
 
-def random_rgb() -> list[int]:
-    rgb = [int(c * 255) for c in colorsys.hsv_to_rgb(random.random(), 1, 1)]
+def random_rgb() -> tuple[int]:
+    rgb = tuple(int(c * 255) for c in colorsys.hsv_to_rgb(random.random(), 1, 1))
     return rgb

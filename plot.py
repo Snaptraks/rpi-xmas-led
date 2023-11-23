@@ -64,7 +64,7 @@ def animate(coords: np.ndarray):
     ax.set_axis_off()
     ax.set_facecolor((0, 0, 0))
     fig.set_facecolor((0, 0, 0))
-    sc = ax.scatter(*coords.T)
+    sc = ax.scatter(*coords.T, facecolor="k")
 
     # color_gen = random_color_fade()
     color_gen = radial_out(coords)

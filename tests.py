@@ -6,10 +6,9 @@ import time
 import board
 import neopixel
 
-from colors import low_res_rainbow, colors_fade_rgb, rainbow_gen, random_rgb
+from colors import colors_fade_rgb, low_res_rainbow, rainbow_gen, random_rgb
 
-
-N_PIXELS: int = 50
+N_PIXELS: int = 100
 pixels = neopixel.NeoPixel(
     board.D21,  # type: ignore
     n=N_PIXELS,

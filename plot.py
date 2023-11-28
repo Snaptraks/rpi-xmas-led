@@ -1,12 +1,9 @@
-import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from matplotlib.collections import PathCollection
+import matplotlib.pyplot as plt
 import numpy as np
-from typing import Generator
+from matplotlib.collections import PathCollection
 
-from colors import colors_fade_rgb, random_rgb
-
-ColorType = tuple[float, ...]
+from colors import ColorType, brain_and_tree
 
 
 def norm_color(color: ColorType) -> ColorType:
@@ -14,69 +11,55 @@ def norm_color(color: ColorType) -> ColorType:
     return tuple(c / 255 for c in color)  # type: ignore
 
 
+def norm_coords(coords: np.ndarray) -> np.ndarray:
+    """Return coordinates normalized between -1 and 1, keeping the aspect ratio."""
+
+    _coords = coords.copy()
+    _coords[0] -= _coords[0].min()
+    _coords[1] -= _coords[1].min()
+
+    coords_max = _coords[0].max() / 2
+    _coords /= coords_max
+    _coords[0] -= 1
+
+    _coords[1] -= _coords[1].max() / 2
+
+    return _coords
+
+
 def plot(coords: np.ndarray):
     fig, ax = plt.subplots()
     colors = np.zeros((coords.shape[1], 3))
-    colors[coords[1] > 0.4, :] = [1, 0, 0]
-    colors[coords[1] < 0.4, :] = [0, 1, 0]
+    # colors[coords[1] > 0.4, :] = [1, 0, 0]
+    # colors[coords[1] < 0.4, :] = [0, 1, 0]
     sc: PathCollection = ax.scatter(*coords)
     sc.set_facecolor(colors)  # type: ignore
+    ax.plot(*coords, c="g")
     ax.set_aspect("equal", "box")
+    plt.show()
     fig.savefig("led.png")
 
 
-def random_color_fade() -> Generator[ColorType, None, None]:
-    start = random_rgb()
-    end = random_rgb()
-
-    while True:
-        for c in colors_fade_rgb(start, end, steps=20):
-            yield norm_color(c)
-        start, end = end, random_rgb()
-
-
-def radial_out(
-    coords: np.ndarray, base_color: ColorType | None = None
-) -> Generator[list[ColorType], None, None]:
-    def func(x, y, t) -> ColorType:
-        return np.exp(-10 * (np.sqrt(x**2 + y**2) - t) ** 2)
-
-    start = -0.7
-    t = start
-    dt = 0.05
-
-    _base_color = base_color or norm_color(random_rgb())
-    while True:
-        color = func(coords[0], coords[1], t)
-        t += dt
-        if t > 2:
-            t = start
-            _base_color = base_color or norm_color(random_rgb())
-
-        yield [
-            (_base_color[0] * c, _base_color[1] * c, _base_color[2] * c) for c in color
-        ]
-
-
 def update_plot(
-    c: tuple[float, float, float], sc: PathCollection
+    colors: list[tuple[float, float, float]], sc: PathCollection
 ) -> tuple[PathCollection]:
-    sc.set_facecolor(c)
+    sc.set_facecolor([norm_color(c) for c in colors])  # type:ignore
     return (sc,)
 
 
 def animate(coords: np.ndarray):
-    fig, ax = plt.subplots(figsize=(5, 5))
+    fig, ax = plt.subplots(figsize=(8, 8))
     ax.set_aspect("equal", "box")
     ax.set_axis_off()
     ax.set_facecolor((0, 0, 0))
     fig.set_facecolor((0, 0, 0))
-    sc = ax.scatter(*coords, facecolor="k")
+    sc = ax.scatter(*coords, facecolor="k", edgecolor="0.1")
 
     # color_gen = random_color_fade()
-    color_gen = radial_out(coords)
+    # color_gen = random_radial_out(coords)
+    color_gen = brain_and_tree(coords[:, :50], coords[:, 50:])
 
-    anim = animation.FuncAnimation(
+    anim = animation.FuncAnimation(  # noqa
         fig,
         update_plot,
         color_gen,  # type: ignore
@@ -88,11 +71,14 @@ def animate(coords: np.ndarray):
 
 
 def main() -> None:
-    # coords_file = "coords.txt"
-    coords_file = "coords-circle.txt"
+    coords_file = "coords.csv"
     coords = np.loadtxt(coords_file, delimiter=",", unpack=True)
+    coords = norm_coords(coords)
+
     # plot(coords)
     animate(coords)
+
+    # brain_and_tree(coords[:, :50], coords[:, 50:])
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib.collections import PathCollection
 
 from colors import ColorType, brain_and_tree
-from main import load_coords
+from coords import load_coords
 
 
 def norm_color(color: ColorType) -> ColorType:
@@ -47,7 +47,7 @@ def animate(coords: np.ndarray):
         update_plot,
         color_gen,  # type: ignore
         fargs=(sc,),
-        interval=50,
+        interval=30,
         cache_frame_data=False,
     )
     plt.show()

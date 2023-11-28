@@ -7,6 +7,7 @@ import neopixel
 import numpy as np
 
 import colors
+from coords import load_coords
 
 N_PIXELS: int = 100
 pixels = neopixel.NeoPixel(

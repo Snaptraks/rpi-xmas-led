@@ -87,6 +87,22 @@ def random_radial_out(coords: np.ndarray) -> Generator[list[ColorType], None, No
         yield from radial_out(coords, center, base_color)
 
 
+def sinus_colors(coords: np.ndarray) -> Generator[list[ColorType], None, None]:
+    def sinus(pixel: int, rgb: int, t: float) -> float:
+        """
+        pixel: index of the pixel
+        rgb: 0: r, 1: g, 2:b
+        """
+        v = np.sin(3 * np.pi * (pixel - t) + 2 * np.pi * rgb / 3) + 1
+        return v / 2 * 255
+
+    t = 0
+    while True:
+        c = [tuple(sinus(p, rgb, t) for rgb in (0, 1, 2)) for p in coords[1]]
+        yield c
+        t += 0.01
+
+
 def tree(coords: np.ndarray) -> Generator[list[ColorType], None, None]:
     while True:
         yield [(0, 127, 14) for _ in range(coords.shape[1])]
@@ -97,7 +113,8 @@ def brain_and_tree(brain_coords, tree_coords) -> Generator[list[ColorType], None
 
     brain_gen = random_radial_out(brain_coords)
     # tree_gen = tree(tree_coords)
-    tree_gen = random_color_fade(steps=40)
+    # tree_gen = random_color_fade(steps=40)
+    tree_gen = sinus_colors(tree_coords)
 
     for brain_colors, tree_colors in zip(brain_gen, tree_gen):
-        yield brain_colors + [tree_colors] * 50  # append both lists
+        yield brain_colors + tree_colors  # append both lists

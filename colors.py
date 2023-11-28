@@ -71,7 +71,7 @@ def radial_out(
 
     start = -0.7
     t = start
-    dt = 0.05
+    dt = 0.025
 
     while t <= 2:
         color = func(coords[0], coords[1], t, _center=center)

@@ -4,6 +4,7 @@ import numpy as np
 from matplotlib.collections import PathCollection
 
 from colors import ColorType, brain_and_tree
+from main import load_coords
 
 
 def norm_color(color: ColorType) -> ColorType:
@@ -11,27 +12,9 @@ def norm_color(color: ColorType) -> ColorType:
     return tuple(c / 255 for c in color)  # type: ignore
 
 
-def norm_coords(coords: np.ndarray) -> np.ndarray:
-    """Return coordinates normalized between -1 and 1, keeping the aspect ratio."""
-
-    _coords = coords.copy()
-    _coords[0] -= _coords[0].min()
-    _coords[1] -= _coords[1].min()
-
-    coords_max = _coords[0].max() / 2
-    _coords /= coords_max
-    _coords[0] -= 1
-
-    _coords[1] -= _coords[1].max() / 2
-
-    return _coords
-
-
 def plot(coords: np.ndarray):
     fig, ax = plt.subplots()
     colors = np.zeros((coords.shape[1], 3))
-    # colors[coords[1] > 0.4, :] = [1, 0, 0]
-    # colors[coords[1] < 0.4, :] = [0, 1, 0]
     sc: PathCollection = ax.scatter(*coords)
     sc.set_facecolor(colors)  # type: ignore
     ax.plot(*coords, c="g")
@@ -52,7 +35,7 @@ def animate(coords: np.ndarray):
     ax.set_aspect("equal", "box")
     ax.set_axis_off()
     ax.set_facecolor((0, 0, 0))
-    fig.set_facecolor((0, 0, 0))
+    fig.set_facecolor("k")
     sc = ax.scatter(*coords, facecolor="k", edgecolor="0.1")
 
     # color_gen = random_color_fade()
@@ -71,14 +54,9 @@ def animate(coords: np.ndarray):
 
 
 def main() -> None:
-    coords_file = "coords.csv"
-    coords = np.loadtxt(coords_file, delimiter=",", unpack=True)
-    coords = norm_coords(coords)
-
+    coords = load_coords("coords.csv")
     # plot(coords)
     animate(coords)
-
-    # brain_and_tree(coords[:, :50], coords[:, 50:])
 
 
 if __name__ == "__main__":

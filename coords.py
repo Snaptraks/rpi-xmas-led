@@ -10,8 +10,7 @@ def norm_coords(coords: np.ndarray) -> np.ndarray:
     _coords[0] -= _coords[0].min()
     _coords[1] -= _coords[1].min()
 
-    coords_max = _coords[0].max() / 2
-    _coords /= coords_max
+    _coords /= _coords[0].max() / 2
     _coords[0] -= 1
 
     _coords[1] -= _coords[1].max() / 2

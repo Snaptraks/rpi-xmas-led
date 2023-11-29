@@ -1,13 +1,13 @@
 import colorsys
-import itertools
 import random
-from typing import Generator
+from itertools import cycle, repeat
+from typing import Generator, Iterable
 
 import numpy as np
 
 ColorType = tuple[float, ...]
 
-low_res_rainbow = itertools.cycle(
+low_res_rainbow = cycle(
     [
         [255, 0, 0],
         [255, 255, 0],
@@ -19,7 +19,9 @@ low_res_rainbow = itertools.cycle(
 )
 
 
-def colors_fade_rgb(color_0: ColorType, color_1: ColorType, steps: int = 20):
+def colors_fade_rgb(
+    color_0: ColorType, color_1: ColorType, steps: int = 50
+) -> Generator[ColorType, None, None]:
     slope = [(color_1[i] - color_0[i]) / steps for i in range(3)]
 
     new_color = color_0[:]
@@ -69,15 +71,13 @@ def radial_out(
             -10 * (np.sqrt((x - _center[0]) ** 2 + (y - _center[1]) ** 2) - t) ** 2
         )
 
-    start = -0.7
-    t = start
+    t = -0.7
     dt = 0.025
 
     while t <= 2:
         color = func(coords[0], coords[1], t, _center=center)
-        t += dt
-
         yield [(base_color[0] * c, base_color[1] * c, base_color[2] * c) for c in color]
+        t += dt
 
 
 def random_radial_out(coords: np.ndarray) -> Generator[list[ColorType], None, None]:
@@ -104,17 +104,47 @@ def sinus_colors(coords: np.ndarray) -> Generator[list[ColorType], None, None]:
 
 
 def tree(coords: np.ndarray) -> Generator[list[ColorType], None, None]:
+    tree_green = (0, 127, 14)
+    star_yellow = (255, 255, 0)
+    N = coords.shape[1]  # total number of lights
+    k = 20  # number of lights with random color
+
     while True:
-        yield [(0, 127, 14) for _ in range(coords.shape[1])]
+        random_lights = random.sample(range(N), k=k)
+        random_colors = [random_rgb() for _ in range(k)]
+        colors: list[Iterable[ColorType]] = [repeat(tree_green) for _ in range(N)]
+
+        def lights_generator(
+            ascend: bool = True
+        ) -> Generator[list[ColorType], None, None]:
+            for i, light in enumerate(random_lights):
+                if ascend:
+                    # start with green, fade to light color
+                    start, end = tree_green, random_colors[i]
+                else:
+                    # start with light color, fade back to green
+                    start, end = random_colors[i], tree_green
+                colors[light] = colors_fade_rgb(start, end)
+
+            # set top of tree to a star (yellow)
+            colors[-1] = repeat(star_yellow)
+
+            for c in zip(*colors):
+                yield list(c)
+
+        # light up the random lights
+        yield from lights_generator(ascend=True)
+        # fade out the random lights
+        yield from lights_generator(ascend=False)
 
 
 def brain_and_tree(brain_coords, tree_coords) -> Generator[list[ColorType], None, None]:
     """Generator for the colors for the brain and the tree."""
 
     brain_gen = random_radial_out(brain_coords)
-    # tree_gen = tree(tree_coords)
+    tree_gen = tree(tree_coords)
     # tree_gen = random_color_fade(steps=40)
-    tree_gen = sinus_colors(tree_coords)
+    # tree_gen = sinus_colors(tree_coords)
 
     for brain_colors, tree_colors in zip(brain_gen, tree_gen):
         yield brain_colors + tree_colors  # append both lists

@@ -9,6 +9,8 @@ import numpy as np
 import colors
 from coords import load_coords
 
+ROOT_PATH = Path(__file__).parent.resolve()
+
 N_PIXELS: int = 100
 pixels = neopixel.NeoPixel(
     board.D21,  # type: ignore
@@ -39,7 +41,7 @@ def run_pixels(coords: np.ndarray) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--coords", type=Path, default=Path("./coords.csv"))
+    parser.add_argument("--coords", type=Path, default=Path(ROOT_PATH / "coords.csv"))
     parser.add_argument("--clear", action="store_true")
 
     args = parser.parse_args()

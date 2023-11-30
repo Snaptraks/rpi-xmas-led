@@ -105,7 +105,7 @@ def sinus_colors(coords: np.ndarray) -> Iterator[list[ColorType]]:
 
 def tree(coords: np.ndarray) -> Iterator[list[ColorType]]:
     tree_green = (0, 127, 14)
-    star_yellow = (255, 255, 0)
+    star_yellow = (255, 80, 0)
     N = coords.shape[1]  # total number of lights
     k = 20  # number of lights with random color
 

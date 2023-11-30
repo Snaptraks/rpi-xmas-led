@@ -82,11 +82,29 @@ def radial_out(
         t += dt
 
 
+def seizure(
+    n_lights: int, light_start: int, light_end: int
+) -> Iterator[list[ColorType]]:
+    seizure_color = (255, 255, 255)
+    for _ in range(100):
+        colors: list[ColorType] = [(0, 0, 0) for _ in range(n_lights)]
+        for i in range(light_start, light_end):
+            intensity = random.random()
+            colors[i] = tuple(intensity * c for c in seizure_color)
+
+        yield colors
+
+
 def random_radial_out(coords: CoordsType) -> Iterator[list[ColorType]]:
+    N = coords.shape[1]
     while True:
-        base_color = random_rgb()
-        center = (random.uniform(-0.8, -0.3), random.uniform(-0.3, 0.3))
-        yield from radial_out(coords, center, base_color)
+        if random.random() < 0.9:
+            base_color = random_rgb()
+            center = (random.uniform(-0.8, -0.3), random.uniform(-0.3, 0.3))
+            yield from radial_out(coords, center, base_color)
+        else:
+            # seizure!
+            yield from seizure(N, 16, 20)
 
 
 def sinus_colors(coords: CoordsType) -> Iterator[list[ColorType]]:

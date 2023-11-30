@@ -5,6 +5,8 @@ from itertools import cycle, repeat
 
 import numpy as np
 
+from coords import CoordsType
+
 ColorType = tuple[float, ...]
 
 low_res_rainbow = cycle(
@@ -62,7 +64,7 @@ def random_color_fade(steps=20) -> Iterator[ColorType]:
 
 
 def radial_out(
-    coords: np.ndarray,
+    coords: CoordsType,
     center: tuple[float, float],
     base_color: ColorType,
 ) -> Iterator[list[ColorType]]:
@@ -80,14 +82,14 @@ def radial_out(
         t += dt
 
 
-def random_radial_out(coords: np.ndarray) -> Iterator[list[ColorType]]:
+def random_radial_out(coords: CoordsType) -> Iterator[list[ColorType]]:
     while True:
         base_color = random_rgb()
         center = (random.uniform(-0.8, -0.3), random.uniform(-0.3, 0.3))
         yield from radial_out(coords, center, base_color)
 
 
-def sinus_colors(coords: np.ndarray) -> Iterator[list[ColorType]]:
+def sinus_colors(coords: CoordsType) -> Iterator[list[ColorType]]:
     def sinus(pixel: int, rgb: int, t: float) -> float:
         """
         pixel: index of the pixel
@@ -103,7 +105,7 @@ def sinus_colors(coords: np.ndarray) -> Iterator[list[ColorType]]:
         t += 0.01
 
 
-def tree(coords: np.ndarray) -> Iterator[list[ColorType]]:
+def tree(coords: CoordsType) -> Iterator[list[ColorType]]:
     tree_green = (0, 127, 14)
     star_yellow = (255, 80, 0)
     N = coords.shape[1]  # total number of lights
@@ -136,7 +138,9 @@ def tree(coords: np.ndarray) -> Iterator[list[ColorType]]:
         yield from lights_generator(ascend=False)
 
 
-def brain_and_tree(brain_coords, tree_coords) -> Iterator[list[ColorType]]:
+def brain_and_tree(
+    brain_coords: CoordsType, tree_coords: CoordsType
+) -> Iterator[list[ColorType]]:
     """Generator for the colors for the brain and the tree."""
 
     brain_gen = random_radial_out(brain_coords)

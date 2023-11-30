@@ -4,10 +4,9 @@ from pathlib import Path
 
 import board
 import neopixel
-import numpy as np
 
-import colors
-from coords import load_coords
+from colors import ColorType, brain_and_tree
+from coords import CoordsType, load_coords
 
 ROOT_PATH = Path(__file__).parent.resolve()
 
@@ -25,14 +24,14 @@ def clear_pixels():
     pixels.deinit()
 
 
-def make_color_int(color: colors.ColorType) -> colors.ColorType:
+def make_color_int(color: ColorType) -> ColorType:
     return tuple(int(c) for c in color)
 
 
-def run_pixels(coords: np.ndarray) -> None:
-    color_gen = colors.brain_and_tree(coords[:, :50], coords[:, 50:])
-    for color in color_gen:
-        for p, c in enumerate(color):
+def run_pixels(coords: CoordsType) -> None:
+    color_gen = brain_and_tree(coords[:, :50], coords[:, 50:])
+    for colors in color_gen:
+        for p, c in enumerate(colors):
             pixels[p] = make_color_int(c)
 
         pixels.show()

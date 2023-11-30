@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib.collections import PathCollection
 
 from colors import ColorType, brain_and_tree
-from coords import load_coords
+from coords import CoordsType, load_coords
 
 
 def norm_color(color: ColorType) -> ColorType:
@@ -12,7 +12,7 @@ def norm_color(color: ColorType) -> ColorType:
     return tuple(c / 255 for c in color)  # type: ignore
 
 
-def plot(coords: np.ndarray):
+def plot(coords: CoordsType):
     fig, ax = plt.subplots()
     colors = np.zeros((coords.shape[1], 3))
     sc: PathCollection = ax.scatter(*coords)
@@ -23,14 +23,12 @@ def plot(coords: np.ndarray):
     fig.savefig("led.png")
 
 
-def update_plot(
-    colors: list[tuple[float, float, float]], sc: PathCollection
-) -> tuple[PathCollection]:
+def update_plot(colors: list[ColorType], sc: PathCollection) -> tuple[PathCollection]:
     sc.set_facecolor([norm_color(c) for c in colors])  # type:ignore
     return (sc,)
 
 
-def animate(coords: np.ndarray):
+def animate(coords: CoordsType):
     fig, ax = plt.subplots(figsize=(8, 8))
     ax.set_aspect("equal", "box")
     ax.set_axis_off()
@@ -47,7 +45,7 @@ def animate(coords: np.ndarray):
         update_plot,
         color_gen,  # type: ignore
         fargs=(sc,),
-        interval=30,
+        interval=1000 / 60,
         cache_frame_data=False,
     )
     plt.show()

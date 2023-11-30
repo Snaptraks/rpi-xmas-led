@@ -1,9 +1,12 @@
 from pathlib import Path
 
 import numpy as np
+from numpy.typing import NDArray
+
+CoordsType = NDArray[np.float_]
 
 
-def norm_coords(coords: np.ndarray) -> np.ndarray:
+def norm_coords(coords: CoordsType) -> CoordsType:
     """Return coordinates normalized between -1 and 1, keeping the aspect ratio."""
 
     _coords = coords.copy()
@@ -18,7 +21,7 @@ def norm_coords(coords: np.ndarray) -> np.ndarray:
     return _coords
 
 
-def load_coords(coords_file: Path | str) -> np.ndarray:
+def load_coords(coords_file: Path | str) -> CoordsType:
     coords = np.loadtxt(coords_file, delimiter=",", unpack=True)
     coords = norm_coords(coords)
     return coords

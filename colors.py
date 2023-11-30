@@ -104,7 +104,7 @@ def random_radial_out(coords: CoordsType) -> Iterator[list[ColorType]]:
             yield from radial_out(coords, center, base_color)
         else:
             # seizure!
-            yield from seizure(N, 16, 20)
+            yield from seizure(N, 16, 21)
 
 
 def sinus_colors(coords: CoordsType) -> Iterator[list[ColorType]]:

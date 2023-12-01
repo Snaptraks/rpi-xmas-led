@@ -7,11 +7,11 @@ While the code in this repository is not meant to be plug-and-play from your own
 
 This project was inspired by [Matt Parker and his 3D Christmas Tree][standupmaths-tree].
 
-<center>
+<p align="center">
     <img src=".github/images/xmas-tree.gif">
     <br>
     (A christmas tree)
-</center>
+</p>
 
 ## Hardware
 

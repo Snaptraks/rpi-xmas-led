@@ -156,6 +156,36 @@ def tree(coords: CoordsType) -> Iterator[list[ColorType]]:
         yield from lights_generator(ascend=False)
 
 
+def heart(
+    coords: CoordsType, center: tuple[float, float] = (0, 0)
+) -> Iterator[list[ColorType]]:
+    reds = (
+        (255, 186, 186),
+        (255, 123, 123),
+        (255, 82, 82),
+        (255, 0, 0),
+        (167, 0, 0),
+    )
+    n_reds = len(reds)
+    N = coords.shape[1]
+    radius = ((coords[0] - center[0]) ** 2 + (coords[1] - center[1]) ** 2) ** 0.5
+    r_max = 0.45
+    t = 0
+    while True:
+        # equation of a semi-circle of radius r_max
+        y = (r_max**2 - (t - r_max) ** 2) ** 0.5
+        t += 0.02
+        # keep 0 < t < 2 * r_max
+        t %= 2 * r_max
+        ring_size = y / n_reds
+        colors: list[ColorType] = [reds[-1] for _ in range(N)]
+        for i, r in enumerate(radius):
+            for n in range(n_reds, 0, -1):
+                if r <= (n + 1) * ring_size:
+                    colors[i] = reds[n - 1]
+        yield colors
+
+
 def brain_and_tree(
     brain_coords: CoordsType, tree_coords: CoordsType
 ) -> Iterator[list[ColorType]]:

@@ -5,7 +5,7 @@ from pathlib import Path
 import board
 import neopixel
 
-from colors import ColorType, brain_and_tree
+from colors import ColorType, brain_and_heart
 from coords import CoordsType, load_coords
 
 ROOT_PATH = Path(__file__).parent.resolve()
@@ -29,7 +29,8 @@ def make_color_int(color: ColorType) -> ColorType:
 
 
 def run_pixels(coords: CoordsType) -> None:
-    color_gen = brain_and_tree(coords[:, :50], coords[:, 50:])
+    # color_gen = brain_and_tree(coords[:, :50], coords[:, 50:])
+    color_gen = brain_and_heart(coords[:, :50], coords[:, 50:])
     for colors in color_gen:
         for p, c in enumerate(colors):
             pixels[p] = make_color_int(c)

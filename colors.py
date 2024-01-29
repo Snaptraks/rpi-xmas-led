@@ -156,6 +156,47 @@ def tree(coords: CoordsType) -> Iterator[list[ColorType]]:
         yield from lights_generator(ascend=False)
 
 
+def heart(
+    coords: CoordsType, center: tuple[float, float] = (0, 0)
+) -> Iterator[list[ColorType]]:
+    reds = (
+        (255, 150, 150),
+        (255, 110, 110),
+        (255, 70, 70),
+        (255, 30, 30),
+        (255, 0, 0),
+    )
+    n_reds = len(reds)
+    N = coords.shape[1]
+    radius = ((coords[0] - center[0]) ** 2 + (coords[1] - center[1]) ** 2) ** 0.5
+    r_max = 0.45
+    t = 0
+    dt = 0.005
+    while True:
+        # equation of a semi-circle of radius r_max
+        y = (r_max**2 - (t - r_max) ** 2) ** 0.5
+        # keep 0 < t < 2 * r_max
+        t += dt
+        t %= 2 * r_max
+
+        ring_size = y / n_reds
+        colors: list[ColorType] = [(0, 0, 0) for _ in range(N)]
+        for i, r in enumerate(radius):
+            for n in range(n_reds, 0, -1):
+                if r <= (n + 1) * ring_size:
+                    # if i % n_reds == n - 1:
+                    colors[i] = reds[n - 1]
+        yield colors
+
+
+def combine_generators(
+    iterator_1: Iterator[list[ColorType]], iterator_2: Iterator[list[ColorType]]
+) -> Iterator[list[ColorType]]:
+    """Combine two generators that output lists."""
+    for colors_1, colors_2 in zip(iterator_1, iterator_2):
+        yield colors_1 + colors_2  # append both lists
+
+
 def brain_and_tree(
     brain_coords: CoordsType, tree_coords: CoordsType
 ) -> Iterator[list[ColorType]]:
@@ -166,5 +207,15 @@ def brain_and_tree(
     # tree_gen = random_color_fade(steps=40)
     # tree_gen = sinus_colors(tree_coords)
 
-    for brain_colors, tree_colors in zip(brain_gen, tree_gen):
-        yield brain_colors + tree_colors  # append both lists
+    yield from combine_generators(brain_gen, tree_gen)
+
+
+def brain_and_heart(
+    brain_coords: CoordsType, tree_coords: CoordsType
+) -> Iterator[list[ColorType]]:
+    """Generator for the colors for the brain and the heart."""
+
+    brain_gen = random_radial_out(brain_coords)
+    heart_gen = heart(tree_coords, center=(0.732, 0.130))
+
+    yield from combine_generators(brain_gen, heart_gen)

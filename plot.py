@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.collections import PathCollection
 
-from colors import ColorType, brain_and_tree
+from colors import ColorType, brain_and_heart
 from coords import CoordsType, load_coords
 
 
@@ -36,16 +36,15 @@ def animate(coords: CoordsType):
     fig.set_facecolor("k")
     sc = ax.scatter(*coords, facecolor="k", edgecolor="0.1")
 
-    # color_gen = random_color_fade()
-    # color_gen = random_radial_out(coords)
-    color_gen = brain_and_tree(coords[:, :50], coords[:, 50:])
+    # color_gen = brain_and_tree(coords[:, :50], coords[:, 50:])
+    color_gen = brain_and_heart(coords[:, :50], coords[:, 50:])
 
     anim = animation.FuncAnimation(  # noqa
         fig,
         update_plot,
         color_gen,  # type: ignore
         fargs=(sc,),
-        interval=1000 / 60,
+        interval=2000 / 60,
         cache_frame_data=False,
     )
     plt.show()
@@ -53,6 +52,7 @@ def animate(coords: CoordsType):
 
 def main() -> None:
     coords = load_coords("coords.csv")
+    # coords = load_coords("tests/coords_heart.csv")
     # plot(coords)
     animate(coords)
 

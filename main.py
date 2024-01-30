@@ -14,7 +14,7 @@ N_PIXELS: int = 100
 pixels = neopixel.NeoPixel(
     board.D21,  # type: ignore
     n=N_PIXELS,
-    brightness=0.6,
+    brightness=0.4,
     pixel_order=neopixel.RGB,
     auto_write=False,
 )

@@ -99,7 +99,8 @@ def random_radial_out(coords: CoordsType) -> Iterator[list[ColorType]]:
     N = coords.shape[1]
     while True:
         if random.random() < 0.9:
-            base_color = random_rgb()
+            # base_color = random_rgb()
+            base_color = (93, 63, 211)  # Purple day
             center = (random.uniform(-0.8, -0.3), random.uniform(-0.3, 0.3))
             yield from radial_out(coords, center, base_color)
         else:

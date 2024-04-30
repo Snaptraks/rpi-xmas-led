@@ -20,6 +20,8 @@ low_res_rainbow = cycle(
     ]
 )
 
+EPILEPSY_PURPLE = (93, 63, 211)
+
 
 def colors_fade_rgb(
     color_0: ColorType, color_1: ColorType, steps: int = 50
@@ -99,8 +101,7 @@ def random_radial_out(coords: CoordsType) -> Iterator[list[ColorType]]:
     N = coords.shape[1]
     while True:
         if random.random() < 0.9:
-            # base_color = random_rgb()
-            base_color = (93, 63, 211)  # Purple day
+            base_color = random_rgb()
             center = (random.uniform(-0.8, -0.3), random.uniform(-0.3, 0.3))
             yield from radial_out(coords, center, base_color)
         else:

@@ -51,9 +51,10 @@ def get_lights_coords_interactive(args: argparse.Namespace) -> None:
 
     root.mainloop()
 
-    with open(args.coords, "w") as f:
-        for x, y in coords:
-            f.write(f"{x},{image_tk.height()-y}\n")
+    if coords:
+        with open(args.coords, "w") as f:
+            for x, y in coords:
+                f.write(f"{x},{image_tk.height()-y}\n")
 
 
 def main() -> None:

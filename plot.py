@@ -24,7 +24,7 @@ def plot(coords: CoordsType):
 
 
 def update_plot(colors: list[ColorType], sc: PathCollection) -> tuple[PathCollection]:
-    sc.set_facecolor([norm_color(c) for c in colors])  # type:ignore
+    sc.set_facecolor([norm_color(c) for c in colors])  # type: ignore
     return (sc,)
 
 

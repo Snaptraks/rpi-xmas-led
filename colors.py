@@ -78,7 +78,7 @@ def radial_out(
     t = -0.7
     dt = 0.025
 
-    while t <= 2:
+    while t <= 2.5:
         color = func(coords[0], coords[1], t, _center=center)
         yield [(base_color[0] * c, base_color[1] * c, base_color[2] * c) for c in color]
         t += dt
@@ -102,11 +102,11 @@ def random_radial_out(coords: CoordsType) -> Iterator[list[ColorType]]:
     while True:
         if random.random() < 0.9:
             base_color = random_rgb()
-            center = (random.uniform(-0.8, -0.3), random.uniform(-0.3, 0.3))
+            center = (random.uniform(-0.75, 0.75), random.uniform(-0.75, 0.75))
             yield from radial_out(coords, center, base_color)
         else:
             # seizure!
-            yield from seizure(N, 16, 21)
+            yield from seizure(N, 85, 93)
 
 
 def sinus_colors(coords: CoordsType) -> Iterator[list[ColorType]]:

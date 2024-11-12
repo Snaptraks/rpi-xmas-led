@@ -69,3 +69,7 @@ def main() -> None:
         )
 
     get_lights_coords_interactive(args)
+
+
+if __name__ == "__main__":
+    main()

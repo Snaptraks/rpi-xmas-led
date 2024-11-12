@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 from numpy.typing import NDArray
 
-CoordsType = NDArray[np.float_]
+CoordsType = NDArray[np.floating]
 
 
 def norm_coords(coords: CoordsType) -> CoordsType:

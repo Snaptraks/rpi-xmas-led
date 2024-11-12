@@ -14,7 +14,7 @@ N_PIXELS: int = 100
 pixels = neopixel.NeoPixel(
     board.D21,  # type: ignore
     n=N_PIXELS,
-    brightness=0.4,
+    brightness=0.7,
     pixel_order=neopixel.RGB,
     auto_write=False,
 )
@@ -40,7 +40,7 @@ def run_pixels(coords: CoordsType) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--coords", type=Path, default=Path(ROOT_PATH / "coords.csv"))
+    parser.add_argument("--coords", type=Path, default=Path(ROOT_PATH / "brain_100.csv"))
     parser.add_argument("--clear", action="store_true")
 
     args = parser.parse_args()
